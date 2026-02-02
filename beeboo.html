@@ -49,18 +49,36 @@ button:active{transform:translateY(4px);box-shadow:0 2px 0 #e09b00;}
 .bee{
   font-size:4rem;
   position:absolute;
-  top:20%;
+  top:25%;
   left:20%;
+  transform:translate(-50%, -50%);
+  animation:beeSquare 10s infinite linear;
   pointer-events:none;
-  animation:beeSquare 6s infinite linear;
 }
 
+.bee.blushing::after{
+  content:'💗';
+  position:absolute;
+  font-size:1.2rem;
+  left:-0.6rem;
+  top:1.4rem;
+}
+
+.bee.blushing::before{
+  content:'💗';
+  position:absolute;
+  font-size:1.2rem;
+  right:-0.6rem;
+  top:1.4rem;
+}
+
+/* ✅ FIXED: Properly closed keyframes */
 @keyframes beeSquare{
-  0%   { transform:translate(0,0); }
-  25%  { transform:translate(60vw,0); }
-  50%  { transform:translate(60vw,60vh); }
-  75%  { transform:translate(0,60vh); }
-  100% { transform:translate(0,0); }
+  0%   { transform: translate(-50%, -50%) translate(0,0); }
+  25%  { transform: translate(-50%, -50%) translate(60vw,0); }
+  50%  { transform: translate(-50%, -50%) translate(60vw,60vh); }
+  75%  { transform: translate(-50%, -50%) translate(0,60vh); }
+  100% { transform: translate(-50%, -50%) translate(0,0); }
 }
 
 .trap{
@@ -84,7 +102,10 @@ button:active{transform:translateY(4px);box-shadow:0 2px 0 #e09b00;}
 
 /* Flower */
 .flower{font-size:4rem;animation:sway 2s infinite alternate;}
-@keyframes sway{from{transform:rotate(-6deg);}to{transform:rotate(6deg);}}
+@keyframes sway{
+  from{transform:rotate(-6deg);} 
+  to{transform:rotate(6deg);} 
+}
 
 /* Secret message */
 .secret{margin-top:20px;color:#ff6f91;font-size:1.3rem;display:none;}
@@ -129,12 +150,13 @@ button:active{transform:translateY(4px);box-shadow:0 2px 0 #e09b00;}
 
 <!-- PAGE 4 -->
 <div class="page" id="p4">
-  <div class="bee">🐝</div>
+  <div class="bee" id="finalBee">🐝</div>
   <div class="flower">🌸</div>
   <h1>Magic ✨</h1>
   <p><!-- EDIT TEXT --> The moment bee reaches boo…</p>
 
   <button onclick="reveal()">Touch boo 💗</button>
+
   <div class="secret" id="secret">💌 I like you… a lot 💌</div>
 </div>
 
@@ -148,12 +170,24 @@ function go(n){
 /* FINAL REVEAL */
 function reveal(){
   document.getElementById('secret').style.display='block';
+
+  const bee = document.getElementById('finalBee');
+  if(bee){
+    bee.style.animation = 'none';
+    bee.classList.add('blushing');
+    bee.style.position = 'static';
+    bee.style.transform = 'none';
+    bee.style.marginTop = '16px';
+  }
+
   sparkle();
 }
 
 /* LOCAL WHITE HEART SPARKLES */
 function sparkle(){
   const target=document.querySelector('.flower');
+  if(!target) return;
+
   const rect=target.getBoundingClientRect();
   for(let i=0;i<10;i++){
     const s=document.createElement('div');
